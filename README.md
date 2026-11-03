@@ -37,9 +37,16 @@ $ herdr-android crashes
 
 ## Requirements
 
-1. macOS or Linux. On Linux, KVM (`/dev/kvm`) for a usable emulator speed.
-2. JDK 17 or later, for the Android SDK tools.
-3. Rust (`cargo`), because herdr builds the plugin from source when it installs.
+1. [herdr](https://herdr.dev) 0.9.0 or later.
+2. macOS or Linux. On Linux, KVM (`/dev/kvm`) for a usable emulator speed.
+3. JDK 17 or later, for the Android SDK tools.
+4. Rust (`cargo`), because herdr builds the plugin from source when it installs.
+5. `curl` and `unzip`, which `install-sdk` uses to download the SDK.
+6. About 10 GB of free disk for the SDK, a system image and a device, which grows as you use it.
+7. `~/.local/bin` on your `PATH`, where the `herdr-android` command is linked.
+8. To build and run your own app, a Gradle Android project.
+
+The view is sharpest in herdr desktop, or the herdr TUI in Ghostty, kitty or WezTerm. Other terminals get a lower-resolution picture.
 
 The Android SDK itself comes from `herdr-android install-sdk`, or uses the one in `ANDROID_HOME` if you have it. Without `herdr-default`, it boots the AVD you used most recently, such as one from Android Studio. Booting an AVD sets `hw.keyboard=yes` in its `config.ini`, because the emulator ignores the View's typing and keys without a hardware keyboard.
 
@@ -69,18 +76,16 @@ This fetches the latest commit and rebuilds. A running device keeps running, and
 ## Uninstall
 
 ```sh
+herdr-android uninstall
 herdr plugin uninstall herdr-android-emulator
 ```
 
-That unregisters the plugin but leaves its link, settings and recorded logs in place. To remove those too:
+Run `herdr-android uninstall` first: it removes the `herdr-android` link and the section `install-agents` added to your agents' instruction files. `herdr plugin uninstall` then unregisters the plugin, but leaves its settings and recorded logs in place. To remove those too:
 
 ```sh
-rm ~/.local/bin/herdr-android
 rm -rf ~/.local/state/herdr/plugins/herdr-android-emulator
 rm -rf ~/.config/herdr/plugins/config/herdr-android-emulator
 ```
-
-`install-agents` also added a `herdr-android` section to your agents' instruction files; delete it by hand until `herdr-android uninstall` does it for you.
 
 The Android SDK and your virtual devices stay, because Android Studio, Flutter and React Native use the same ones. To remove them too:
 
@@ -139,6 +144,18 @@ cd examples/demo-app
 herdr-android boot --show
 herdr-android build --run
 ```
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `herdr-android: command not found` | Add `~/.local/bin` to your `PATH`, or run `herdr plugin action invoke herdr-android-emulator.install-cli`. |
+| `no AVD named …` | `herdr-android devices` lists your AVDs; boot one by name, set `default_device`, or run `herdr-android install-sdk`. |
+| The view is blank | Set `view_renderer = "blocks"`. |
+| The device looks stretched | Set `cell_aspect`, e.g. `2.6`. |
+| Typing in the view does nothing | Shut the device down (the Power button) and boot it again, so it picks up its hardware keyboard. |
+| The emulator is very slow on Linux | Enable KVM: `/dev/kvm` must exist and be readable by you. |
+| `install-sdk` can't find Java | Install JDK 17 or later, or point `JAVA_HOME` at one. |
 
 ## Development
 

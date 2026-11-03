@@ -123,8 +123,7 @@ Done when: one click in the View puts a screenshot in the agent's prompt.
 - `install-agents` teaches Claude Code, Codex, OpenCode and Pi to use `herdr-android`.
   Re-running it after an update replaces its own section.
 - `uninstall` undoes everything the plugin added outside herdr: the CLI symlink and the agent
-  instructions. It leaves the SDK and AVDs, which other tools share. Until it exists the README
-  lists the manual steps.
+  instructions. It leaves the SDK and AVDs, which other tools share.
 - Ctrl-click a `myapp://` or `intent://` link in any herdr terminal to open it on the Device.
 - Repo gets the `herdr-plugin` topic, which lists it on the marketplace, only after a manual test
   by the maintainer.
