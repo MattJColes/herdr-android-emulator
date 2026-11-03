@@ -1,0 +1,12 @@
+# herdr-android-emulator: an Android emulator in a herdr pane. Agents drive it with the
+# `herdr-android` CLI and read its logcat, crashes and events; the pane mirrors the screen.
+
+id = "herdr-android-emulator"
+name = "herdr-android-emulator"
+version = "0.1.0" # x-release-please-version
+description = "An Android emulator beside your coding agent: a live screen you can tap, and logs, crashes and events the agent can read."
+min_herdr_version = "0.9.0"
+platforms = ["macos", "linux"]
+
+[[build]]
+command = ["cargo", "build", "--release"]
