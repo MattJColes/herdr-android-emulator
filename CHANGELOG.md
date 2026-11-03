@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/MattJColes/herdr-android-emulator/compare/v1.1.0...v1.2.0) (2026-11-03)
+
+
+### Features
+
+* Set up everything during plugin install ([06a091f](https://github.com/MattJColes/herdr-android-emulator/commit/06a091f03cc7a61dd89eb7ce5af3e8d4986c8995))
+* Set up everything during plugin install ([4fe7b21](https://github.com/MattJColes/herdr-android-emulator/commit/4fe7b21b237d1d6878fd7858be93225586c64061))
+
 ## [1.1.0](https://github.com/MattJColes/herdr-android-emulator/compare/v1.0.0...v1.1.0) (2026-11-03)
 
 
