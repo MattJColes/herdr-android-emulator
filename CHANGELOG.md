@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/MattJColes/herdr-android-emulator/compare/v1.0.0...v1.1.0) (2026-11-03)
+
+
+### Features
+
+* Set up agents at startup when herdr desktop is installed ([3999f41](https://github.com/MattJColes/herdr-android-emulator/commit/3999f41b984c077d1eb8be5544c2849373a4b84b))
+* Set up agents at startup when herdr desktop is installed ([95a2205](https://github.com/MattJColes/herdr-android-emulator/commit/95a220568a42adb3771a096515b3ee55f7fb0c1b))
+
 ## [1.0.0](https://github.com/MattJColes/herdr-android-emulator/compare/v0.1.0...v1.0.0) (2026-11-03)
 
 
