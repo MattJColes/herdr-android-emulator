@@ -118,8 +118,22 @@ pub fn current(cfg: &Config, flag: Option<&str>) -> R<Device> {
     }
 }
 
+/// The AVD to boot when none is named: `default_device`, else `herdr-default` if it exists,
+/// else the most recently used AVD on this machine (Android Studio's, Flutter's, ...).
 pub fn default_avd(cfg: &Config) -> String {
-    cfg.default_device.clone().unwrap_or_else(|| sdk::DEFAULT_AVD.into())
+    if let Some(d) = &cfg.default_device {
+        return d.clone();
+    }
+    let found: Vec<_> = sdk::avds().into_iter().map(|a| (sdk::last_used(&a), a)).collect();
+    pick_avd(found).unwrap_or_else(|| sdk::DEFAULT_AVD.into())
+}
+
+fn pick_avd(mut found: Vec<(Option<std::time::SystemTime>, String)>) -> Option<String> {
+    if found.iter().any(|(_, a)| a == sdk::DEFAULT_AVD) {
+        return Some(sdk::DEFAULT_AVD.into());
+    }
+    found.sort();
+    found.pop().map(|(_, a)| a)
 }
 
 /// Boot `avd` (or reuse it if running) and make it the Current Device.
@@ -301,6 +315,17 @@ pub fn button(d: &Device, b: Button) -> R<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn default_avd_prefers_herdr_default_then_the_most_recent() {
+        use std::time::{Duration, UNIX_EPOCH};
+        let at = |s| Some(UNIX_EPOCH + Duration::from_secs(s));
+        let mut found = vec![(at(9), "Pixel".to_string()), (at(1), "Tablet".to_string()), (None, "Old".to_string())];
+        assert_eq!(pick_avd(found.clone()).as_deref(), Some("Pixel"));
+        found.push((at(0), sdk::DEFAULT_AVD.into()));
+        assert_eq!(pick_avd(found).as_deref(), Some(sdk::DEFAULT_AVD));
+        assert_eq!(pick_avd(vec![]), None);
+    }
 
     #[test]
     fn typed_text_survives_the_device_shell() {

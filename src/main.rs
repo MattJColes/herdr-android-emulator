@@ -42,7 +42,7 @@ struct Cli {
 enum Cmd {
     /// List AVDs; `*` marks the Current Device, `+` other running ones.
     Devices,
-    /// Boot an AVD (default: herdr-default) or reuse it if running, and make it current.
+    /// Boot an AVD (default: `default_device`, herdr-default, or the most recently used AVD) or reuse it if running, and make it current.
     Boot {
         avd: Option<String>,
         /// Also show it to the user in a herdr view.
