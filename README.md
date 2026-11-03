@@ -16,7 +16,7 @@ Run **Android: open** from herdr, pick **Android** from herdr desktop's + menu, 
 
 ### Set up in one command
 
-`herdr-android install-sdk` installs the Android SDK, a system image and a ready-to-boot device. No Android Studio.
+`herdr plugin install` is all you run. Our installer checks for the Android SDK and downloads it if it's missing, along with a ready-to-boot device. You don't need Android Studio, only JDK 17 or later.
 
 ### Agents build, run and drive the app
 
@@ -41,32 +41,29 @@ $ herdr-android crashes
 2. JDK 17 or later, for the Android SDK tools.
 3. Rust (`cargo`), because herdr builds the plugin from source when it installs.
 
-The Android SDK itself comes from `herdr-android install-sdk`, or uses the one in `ANDROID_HOME` if you have it. Without `herdr-default`, it boots the AVD you used most recently, such as one from Android Studio. Booting an AVD sets `hw.keyboard=yes` in its `config.ini`, because the emulator ignores the View's typing and keys without a hardware keyboard.
+The install uses the Android SDK in `ANDROID_HOME` (or Android Studio's) if you have one, and installs one otherwise. Without `herdr-default`, it boots the AVD you used most recently, such as one from Android Studio. Booting an AVD sets `hw.keyboard=yes` in its `config.ini`, because the emulator ignores the View's typing and keys without a hardware keyboard.
 
 ## Install
 
 ```sh
 herdr plugin install MattJColes/herdr-android-emulator
-herdr-android install-sdk      # skip if you already have the SDK and an AVD
-herdr-android install-agents   # teach Claude Code, Codex, OpenCode and Pi to use it
 ```
 
-With herdr desktop installed, herdr runs `install-agents` for you each time it starts. It adds **Android** to the + menu and installs a `herdr-android` skill or instructions for every agent it finds. `herdr-android uninstall` takes them back out.
+herdr shows the commands the plugin will run, then builds it with `cargo build --release` and sets it up:
 
-herdr shows the commands the plugin will run, builds it with `cargo build --release`, and links `herdr-android` into `~/.local/bin` the next time herdr starts. To link it straight away:
+1. Links `herdr-android` into `~/.local/bin`.
+2. Runs `herdr-android install-sdk`. This does nothing if you already have an SDK with an AVD, for example from Android Studio. Otherwise it downloads a few GB the first time.
+3. Runs `herdr-android install-agents`, which installs a `herdr-android` skill or instructions for Claude Code, Codex, OpenCode and Pi, whichever you have. It also adds **Android** to herdr desktop's + menu.
 
-```sh
-herdr plugin action invoke herdr-android-emulator.install-cli
-```
+If a step fails, for example because no JDK 17+ is found, the install still finishes and prints the fix; run that command again afterwards. With herdr desktop installed, herdr also re-runs `install-agents` each time it starts. `herdr-android uninstall` takes the agent setup back out.
 
 ## Update
 
 ```sh
 herdr plugin update herdr-android-emulator
-herdr-android install-agents   # refresh what your agents know about new commands
 ```
 
-This fetches the latest commit and rebuilds. A running device keeps running, and a view that is already open keeps the old build; close it and open it again to get the new one.
+This fetches the latest commit, rebuilds and re-runs the setup, so your agents learn any new commands. A running device keeps running, and a view that is already open keeps the old build; close it and open it again to get the new one.
 
 ## Uninstall
 

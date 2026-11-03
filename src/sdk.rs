@@ -184,6 +184,10 @@ pub fn enable_keyboard(avd: &str) -> R<()> {
 
 /// Install everything a Device needs and create the Default AVD; safe to run again.
 pub fn install() -> R<String> {
+    // An existing SDK (ours or Android Studio's) with an AVD is enough; don't touch it.
+    if adb().exists() && emulator().exists() && aapt2().is_ok() && !avds().is_empty() {
+        return Ok(format!("Android SDK already at {} with an AVD; nothing to install", root().display()));
+    }
     let java = java_home()?;
     let path = format!("{}:{}", java.join("bin").display(), std::env::var("PATH").unwrap_or_default());
     if !sdkmanager().exists() {
