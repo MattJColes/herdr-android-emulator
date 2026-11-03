@@ -1,46 +1,73 @@
 # herdr-android-emulator
 
-An Android emulator built into [herdr](https://herdr.dev). The emulator's screen opens in a pane next to your coding agent, so you and your agent use the same device. The agent can install and click through your app, and read its logs, crashes and events, while you watch.
+An Android emulator inside [herdr](https://herdr.dev). The emulator opens in a view next to your coding agent, so you and your agent use the same device, and the agent can read every log, crash and event the app produces. Its sibling, [herdr-ios-simulator](https://github.com/MattJColes/herdr-ios-simulator), does the same for iOS with the same commands.
 
-> **Status: early development.** Nothing below works yet. [FEATURES.md](FEATURES.md) lists what's being built and in what order. Screenshots come once the pane works.
+> **Status: early development.** Nothing below works yet. [docs/FEATURES.md](docs/FEATURES.md) lists what's being built and in what order. Screenshots come once the view works.
 
-## What it will do
+## What it does
 
-- **Opens from herdr's + menu.** Pick **Android** and the emulator's screen opens beside your agent. Click to tap, drag to swipe, type to type. There's no separate emulator window.
-- **Set up in one command.** `herdr-android install-sdk` installs the Android SDK, a system image and a ready-to-boot device. No Android Studio.
-- **Agents can drive it.** Install an APK, launch the app, list what's on screen, tap, type and take screenshots.
-- **Agents see what happened.** Your app's logcat, crashes with stack traces, and device events, kept from the moment the emulator boots.
+### A view beside your agent
+
+Run **Android: open** from herdr, pick **Android** from herdr desktop's + menu, or let the agent run `herdr-android boot --show`. The emulator boots without its own window and appears in a herdr pane. Click to tap, drag to swipe, type to type. The header has Back, Home, Recents, Rotate, Screenshot and Quit buttons.
+
+### Set up in one command
+
+`herdr-android install-sdk` installs the Android SDK, a system image and a ready-to-boot device. No Android Studio.
+
+### Agents build, run and drive the app
+
+The agent builds with Gradle and gets back only the errors and warnings, with file:line. It installs and launches the app, lists what's on screen, and taps and types like you would. You watch it happen and can take over at any point.
+
+### Every log and event, on demand
+
+`logs` returns the app's logcat, following it across restarts. `crashes` returns crashes and ANRs with their stacks, even from before the last reboot. `events` returns the device's timeline: boots, installs, launches, and your taps in the view. Nothing streams into the agent's context until it asks.
 
 ## Requirements
 
-- herdr 0.9 or later, on macOS or Linux
-- Rust (herdr builds the plugin with cargo when it installs it)
-- JDK 17 or later (for the Android SDK tools)
-- Linux: KVM (`/dev/kvm`) for a usable emulator speed
+1. macOS or Linux. On Linux, KVM (`/dev/kvm`) for a usable emulator speed.
+2. JDK 17 or later, for the Android SDK tools.
+3. Rust (`cargo`), because herdr builds the plugin from source when it installs.
+
+The Android SDK itself comes from `herdr-android install-sdk`, or uses the one in `ANDROID_HOME` if you have it.
 
 ## Install
 
 ```sh
 herdr plugin install MattJColes/herdr-android-emulator
+herdr-android install-sdk      # skip if you already have the SDK and an AVD
+herdr-android install-agents   # teach Claude Code, Codex, OpenCode and Pi to use it
+```
+
+herdr shows the commands the plugin will run, builds it with `cargo build --release`, and links `herdr-android` into `~/.local/bin` the next time herdr starts. To link it straight away:
+
+```sh
+herdr plugin action invoke herdr-android-emulator.install-cli
 ```
 
 ## Update
 
 ```sh
 herdr plugin update herdr-android-emulator
-herdr-android install-agents    # refresh what your agents know about new commands
+herdr-android install-agents   # refresh what your agents know about new commands
 ```
 
-The update rebuilds the plugin. A running emulator keeps running; close and reopen the Android pane to pick up the new version.
+This fetches the latest commit and rebuilds. A running device keeps running, and a view that is already open keeps the old build; close it and open it again to get the new one.
 
 ## Uninstall
 
 ```sh
-herdr-android uninstall          # removes the CLI from ~/.local/bin and its section from your agents' instructions
 herdr plugin uninstall herdr-android-emulator
 ```
 
-Run them in that order: `herdr-android` is gone after the second one. Your settings stay in herdr's plugin config folder (`herdr plugin config-dir herdr-android-emulator` shows where); delete it to start fresh next time.
+That unregisters the plugin but leaves its link, settings and recorded logs in place. To remove those too:
+
+```sh
+rm ~/.local/bin/herdr-android
+rm -rf ~/.local/state/herdr/plugins/herdr-android-emulator
+rm -rf ~/.config/herdr/plugins/config/herdr-android-emulator
+```
+
+`install-agents` also added a `herdr-android` section to your agents' instruction files; delete it by hand until `herdr-android uninstall` does it for you.
 
 The Android SDK and your virtual devices stay, because Android Studio, Flutter and React Native use the same ones. To remove them too:
 
@@ -49,18 +76,58 @@ rm -rf ~/Library/Android/sdk ~/.android/avd   # macOS
 rm -rf ~/Android/Sdk ~/.android/avd           # Linux
 ```
 
+## For agents
+
+```sh
+herdr-android boot --show                    # boot the default device and show it to the user
+herdr-android build --run                    # errors/warnings with file:line, then install and launch
+herdr-android ui                             # [4] Button "Sign in"
+herdr-android tap 4
+herdr-android type "hello" --submit
+herdr-android mark before-login
+herdr-android logs --errors --since before-login
+herdr-android crashes
+herdr-android screenshot /tmp/screen.png
+```
+
+`herdr-android agent-help` prints the full list. Add `--json` to any command for structured output, and `--device emulator-5556` to pick a device when several are running.
+
+## Using the view
+
+| Input | What it does |
+|---|---|
+| Click | Tap |
+| Drag | Swipe |
+| Scroll wheel | Scroll |
+| Typing, Return, Backspace, Tab | Sent to the focused field |
+| Ctrl-B | Back |
+| Ctrl-O | Home |
+| Ctrl-X | Screenshot (saved under the plugin's state folder) |
+| Ctrl-Q | Close the view (the device keeps running) |
+
+## Settings
+
+Optional. Put them in `~/.config/herdr/plugins/config/herdr-android-emulator/config.toml`:
+
+```toml
+default_device = "herdr-default"   # the AVD `boot` and the view use when nothing is running
+fps = 15                           # live view frame rate, 1-30
+view_renderer = "blocks"           # if the view stays blank in your terminal
+cell_aspect = 2.6                  # if the device looks stretched
+```
+
 ## Development
 
 ```sh
 git clone git@github.com:MattJColes/herdr-android-emulator.git
 cd herdr-android-emulator
-git config core.hooksPath .githooks   # fmt, clippy and tests before each commit
-herdr plugin link .                    # run your checkout inside herdr
 cargo build --release
+herdr plugin link .
+git config core.hooksPath .githooks   # once per clone: fmt, clippy and tests before each commit
 ```
 
-Commits follow [Conventional Commits](https://www.conventionalcommits.org). Release Please turns them into the changelog and version bumps.
+`herdr plugin link` doesn't run build commands, so rebuild with `cargo build --release` after each change. CI runs `cargo fmt`, `clippy` and the tests on macOS and Linux for every pull request. Release Please opens a release PR from Conventional Commits. Words like Device, View and Current app are defined in [GLOSSARY.md](GLOSSARY.md); decisions are in [docs/adr](docs/adr).
 
 ## License
 
-[MIT](LICENSE)
+MIT. See [LICENSE](LICENSE).
