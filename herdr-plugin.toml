@@ -15,6 +15,10 @@ command = ["cargo", "build", "--release"]
 [[startup]]
 command = ["./target/release/herdr-android", "install-cli"]
 
+# With herdr desktop installed, set up the agents and its + menu too; re-running replaces our own sections.
+[[startup]]
+command = ["./target/release/herdr-android", "install-agents", "--if-desktop"]
+
 [[panes]]
 id = "android"
 title = "Android"
@@ -50,6 +54,10 @@ id = "install-cli"
 title = "Android: install CLI"
 description = "Symlink herdr-android into ~/.local/bin so agents can call it."
 command = ["./target/release/herdr-android", "install-cli"]
+
+# With herdr desktop installed, set up the agents and its + menu too; re-running replaces our own sections.
+[[startup]]
+command = ["./target/release/herdr-android", "install-agents", "--if-desktop"]
 
 # Ctrl-click an intent:// link in any herdr terminal to open it on the Device.
 [[actions]]

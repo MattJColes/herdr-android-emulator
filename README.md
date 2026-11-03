@@ -51,6 +51,8 @@ herdr-android install-sdk      # skip if you already have the SDK and an AVD
 herdr-android install-agents   # teach Claude Code, Codex, OpenCode and Pi to use it
 ```
 
+With herdr desktop installed, herdr runs `install-agents` for you each time it starts. It adds **Android** to the + menu and installs a `herdr-android` skill or instructions for every agent it finds. `herdr-android uninstall` takes them back out.
+
 herdr shows the commands the plugin will run, builds it with `cargo build --release`, and links `herdr-android` into `~/.local/bin` the next time herdr starts. To link it straight away:
 
 ```sh
