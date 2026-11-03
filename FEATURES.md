@@ -78,7 +78,8 @@ re-running anything.
   "which agent gets it" order.
 - `pane.closed` / `pane.moved` events keep each pane tied to its emulator.
 - Ctrl-click a `myapp://` or `intent://` link in any herdr terminal to open it on the device.
-- Repo gets the `herdr-plugin` topic once 1–4 work, which lists it on the marketplace.
+- Repo gets the `herdr-plugin` topic, which lists it on the marketplace, only after a
+  manual test by the maintainer.
 
 ### 6. README with screenshots
 
