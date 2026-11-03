@@ -10,3 +10,56 @@ platforms = ["macos", "linux"]
 
 [[build]]
 command = ["cargo", "build", "--release"]
+
+# Put `herdr-android` on PATH (~/.local/bin) so agents can call it; replaces its own symlink.
+[[startup]]
+command = ["./target/release/herdr-android", "install-cli"]
+
+[[panes]]
+id = "android"
+title = "Android"
+placement = "split"
+command = ["./target/release/herdr-android", "pane"]
+
+[[actions]]
+id = "open"
+title = "Android: open"
+description = "Boot the emulator if needed and show it in a pane."
+command = ["/bin/sh", "-c", "exec \"$HERDR_BIN_PATH\" plugin pane open --plugin herdr-android-emulator --entrypoint android"]
+
+[[actions]]
+id = "send-screenshot"
+title = "Android: send screenshot to agent"
+description = "Screenshot the Current Device and send its file path to the agent."
+command = ["./target/release/herdr-android", "send-screenshot"]
+
+[[actions]]
+id = "shutdown"
+title = "Android: shut down"
+description = "Shut the Current Device down."
+command = ["./target/release/herdr-android", "shutdown"]
+
+[[actions]]
+id = "install-agents"
+title = "Android: set up agents"
+description = "Teach Claude Code, Codex, OpenCode and Pi to use herdr-android, in every project."
+command = ["./target/release/herdr-android", "install-agents"]
+
+[[actions]]
+id = "install-cli"
+title = "Android: install CLI"
+description = "Symlink herdr-android into ~/.local/bin so agents can call it."
+command = ["./target/release/herdr-android", "install-cli"]
+
+# Ctrl-click an intent:// link in any herdr terminal to open it on the Device.
+[[actions]]
+id = "open-link"
+title = "Android: open clicked link"
+description = "Open a ctrl-clicked app link on the Device."
+command = ["/bin/sh", "-c", "exec ./target/release/herdr-android deeplink \"$HERDR_PLUGIN_CLICKED_URL\""]
+
+[[link_handlers]]
+id = "app-link"
+title = "Open on Android"
+pattern = "^intent://.+$"
+action = "open-link"

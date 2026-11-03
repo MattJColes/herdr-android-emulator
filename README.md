@@ -2,13 +2,17 @@
 
 An Android emulator inside [herdr](https://herdr.dev). The emulator opens in a view next to your coding agent, so you and your agent use the same device, and the agent can read every log, crash and event the app produces. Its sibling, [herdr-ios-simulator](https://github.com/MattJColes/herdr-ios-simulator), does the same for iOS with the same commands.
 
-> **Status: early development.** Nothing below works yet. [docs/FEATURES.md](docs/FEATURES.md) lists what's being built and in what order. Screenshots come once the view works.
+![The Android View beside Claude Code in herdr, after the agent signed in to the demo app with herdr-android tap and type](docs/screens/view-beside-agent.png)
+
+> **Status: early development.** The View, the agent CLI, logs, crashes and events work on macOS; Linux is untested. [docs/FEATURES.md](docs/FEATURES.md) lists what's built and what's next.
 
 ## What it does
 
 ### A view beside your agent
 
-Run **Android: open** from herdr, pick **Android** from herdr desktop's + menu, or let the agent run `herdr-android boot --show`. The emulator boots without its own window and appears in a herdr pane. Click to tap, drag to swipe, type to type. The header has Back, Home, Recents, Rotate, Screenshot and Quit buttons.
+Run **Android: open** from herdr, pick **Android** from herdr desktop's + menu, or let the agent run `herdr-android boot --show`. The emulator boots without its own window and appears in a herdr pane. Click to tap, drag to swipe, type to type. The header has Android's Back, Home and Recents buttons on the left, and Rotate, Send screenshot to agent and Power on the right; hover one to see its name.
+
+<img src="docs/screens/view.png" width="420" alt="The View: Back, Home and Recents on the left, the device name in the middle, Rotate, Send screenshot and Power on the right, above the device's home screen">
 
 ### Set up in one command
 
@@ -20,7 +24,16 @@ The agent builds with Gradle and gets back only the errors and warnings, with fi
 
 ### Every log and event, on demand
 
-`logs` returns the app's logcat, following it across restarts. `crashes` returns crashes and ANRs with their stacks, even from before the last reboot. `events` returns the device's timeline: boots, installs, launches, and your taps in the view. Nothing streams into the agent's context until it asks.
+`logs` returns the app's logcat, following it across restarts. `crashes` returns crashes and ANRs with their stacks, even from before the last reboot:
+
+```
+$ herdr-android crashes
+22:49:46 boot 11 crash in dev.herdr.demo
+  java.lang.IllegalStateException: sign in failed: no email
+    at dev.herdr.demo.MainActivity.lambda$onCreate$1(MainActivity.java:53)
+    at android.view.View.performClick(View.java:8083)
+```
+`events` returns the device's timeline: boots, installs, launches, and your taps in the view. Nothing streams into the agent's context until it asks.
 
 ## Requirements
 
@@ -28,7 +41,7 @@ The agent builds with Gradle and gets back only the errors and warnings, with fi
 2. JDK 17 or later, for the Android SDK tools.
 3. Rust (`cargo`), because herdr builds the plugin from source when it installs.
 
-The Android SDK itself comes from `herdr-android install-sdk`, or uses the one in `ANDROID_HOME` if you have it.
+The Android SDK itself comes from `herdr-android install-sdk`, or uses the one in `ANDROID_HOME` if you have it. Booting an AVD sets `hw.keyboard=yes` in its `config.ini`, because the emulator ignores the View's typing and keys without a hardware keyboard.
 
 ## Install
 
@@ -102,8 +115,9 @@ herdr-android screenshot /tmp/screen.png
 | Typing, Return, Backspace, Tab | Sent to the focused field |
 | Ctrl-B | Back |
 | Ctrl-O | Home |
-| Ctrl-X | Screenshot (saved under the plugin's state folder) |
+| Ctrl-X | Send a screenshot to the agent |
 | Ctrl-Q | Close the view (the device keeps running) |
+| Header buttons | Back, Home, Recents · Rotate, Send screenshot to agent, Power (shuts the device down) |
 
 ## Settings
 
@@ -114,6 +128,16 @@ default_device = "herdr-default"   # the AVD `boot` and the view use when nothin
 fps = 15                           # live view frame rate, 1-30
 view_renderer = "blocks"           # if the view stays blank in your terminal
 cell_aspect = 2.6                  # if the device looks stretched
+```
+
+## Try it
+
+`examples/demo-app` is a sign-in screen with two bugs to find: Sign in with no email crashes, and Freeze causes an ANR.
+
+```sh
+cd examples/demo-app
+herdr-android boot --show
+herdr-android build --run
 ```
 
 ## Development
