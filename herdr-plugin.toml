@@ -8,8 +8,13 @@ description = "An Android emulator beside your coding agent: a live screen you c
 min_herdr_version = "0.9.0"
 platforms = ["macos", "linux"]
 
+# Build, then set up in the same step so `herdr plugin install` is the only command: link the CLI,
+# install the SDK unless one with an AVD exists, and teach the agents. A missing JDK or agent
+# is reported but doesn't fail the install; re-run that command once it's fixed.
 [[build]]
-command = ["cargo", "build", "--release"]
+command = ["/bin/sh", "-c", """cargo build --release && ./target/release/herdr-android install-cli \
+&& { ./target/release/herdr-android install-sdk || echo 'herdr-android: SDK not installed; fix the above, then run herdr-android install-sdk'; } \
+&& { ./target/release/herdr-android install-agents || echo 'herdr-android: agents not set up; run herdr-android install-agents later'; }"""]
 
 # Put `herdr-android` on PATH (~/.local/bin) so agents can call it; replaces its own symlink.
 [[startup]]
@@ -54,10 +59,6 @@ id = "install-cli"
 title = "Android: install CLI"
 description = "Symlink herdr-android into ~/.local/bin so agents can call it."
 command = ["./target/release/herdr-android", "install-cli"]
-
-# With herdr desktop installed, set up the agents and its + menu too; re-running replaces our own sections.
-[[startup]]
-command = ["./target/release/herdr-android", "install-agents", "--if-desktop"]
 
 # Ctrl-click an intent:// link in any herdr terminal to open it on the Device.
 [[actions]]
