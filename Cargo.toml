@@ -1,6 +1,6 @@
 [package]
 name = "herdr-android-emulator"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2024"
 description = "An Android emulator in a herdr pane: agents drive it with a CLI and read its logs, crashes and events."
 license = "MIT"
