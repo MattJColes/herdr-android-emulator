@@ -20,7 +20,8 @@ What herdr-android-emulator does, in the order we build it. Each v1 item is done
 
 `herdr-android install-sdk` installs cmdline-tools, platform-tools, the emulator and a
 system image for this machine, accepts the licences and creates a default AVD with a sane
-density. It finds an existing `ANDROID_HOME` and reuses it. If JDK 17+ is missing it says
+density. It finds an existing `ANDROID_HOME` and reuses it; otherwise it installs to the
+standard place (`~/Library/Android/sdk`, `~/Android/Sdk`) so other Android tools share it. If JDK 17+ is missing it says
 how to install it and stops.
 
 Done when: a machine with only a JDK goes from nothing to a booted emulator with one command.
@@ -74,6 +75,9 @@ re-running anything.
 ### 5. herdr integration
 
 - `install-agents` teaches Claude Code, Codex, OpenCode and Pi to use `herdr-android`.
+  Re-running it after an update replaces its own section.
+- `uninstall` undoes everything the plugin added outside herdr: the CLI symlink and the
+  agent instructions. It leaves the SDK and AVDs, which other tools share.
 - Screenshot and log sends go through `herdr agent prompt`, using the browser's
   "which agent gets it" order.
 - `pane.closed` / `pane.moved` events keep each pane tied to its emulator.
