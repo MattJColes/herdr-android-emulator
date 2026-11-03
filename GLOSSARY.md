@@ -12,8 +12,8 @@ be booted into a Device; on its own it does nothing.
 _Avoid_: emulator, image, profile
 
 **Default AVD**:
-The AVD that `install-sdk` creates, `herdr-default`, booted when a Device is needed and
-none is running.
+The AVD booted when a Device is needed and none is running: `default_device` from the
+settings, else `herdr-default` (which `install-sdk` creates), else the most recently used AVD.
 _Avoid_: stock emulator, base image
 
 **Device**:

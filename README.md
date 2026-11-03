@@ -41,7 +41,7 @@ $ herdr-android crashes
 2. JDK 17 or later, for the Android SDK tools.
 3. Rust (`cargo`), because herdr builds the plugin from source when it installs.
 
-The Android SDK itself comes from `herdr-android install-sdk`, or uses the one in `ANDROID_HOME` if you have it. Booting an AVD sets `hw.keyboard=yes` in its `config.ini`, because the emulator ignores the View's typing and keys without a hardware keyboard.
+The Android SDK itself comes from `herdr-android install-sdk`, or uses the one in `ANDROID_HOME` if you have it. Without `herdr-default`, it boots the AVD you used most recently, such as one from Android Studio. Booting an AVD sets `hw.keyboard=yes` in its `config.ini`, because the emulator ignores the View's typing and keys without a hardware keyboard.
 
 ## Install
 
@@ -124,7 +124,7 @@ herdr-android screenshot /tmp/screen.png
 Optional. Put them in `~/.config/herdr/plugins/config/herdr-android-emulator/config.toml`:
 
 ```toml
-default_device = "herdr-default"   # the AVD `boot` and the view use when nothing is running
+default_device = "herdr-default"   # the AVD `boot` and the view use when nothing is running; unset: herdr-default, else your most recently used AVD
 fps = 15                           # live view frame rate, 1-30
 view_renderer = "blocks"           # if the view stays blank in your terminal
 cell_aspect = 2.6                  # if the device looks stretched

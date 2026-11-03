@@ -146,6 +146,16 @@ fn install_cmdline_tools() -> R<()> {
     Ok(())
 }
 
+/// Where AVDs live: `ANDROID_AVD_HOME`, else `~/.android/avd`.
+pub fn avd_dir() -> PathBuf {
+    std::env::var_os("ANDROID_AVD_HOME").map(PathBuf::from).unwrap_or_else(|| home().join(".android/avd"))
+}
+
+/// When `avd` last ran: the emulator rewrites files in its `.avd` folder on every boot.
+pub fn last_used(avd: &str) -> Option<std::time::SystemTime> {
+    std::fs::metadata(avd_dir().join(format!("{avd}.avd"))).and_then(|m| m.modified()).ok()
+}
+
 pub fn avds() -> Vec<String> {
     let Ok(out) = Command::new(emulator()).arg("-list-avds").stderr(Stdio::null()).output() else { return Vec::new() };
     String::from_utf8_lossy(&out.stdout).lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with("INFO")).map(String::from).collect()
@@ -164,8 +174,7 @@ fn with_keyboard(config: &str) -> Option<String> {
 
 /// Give `avd` a hardware keyboard so the View can type into it.
 pub fn enable_keyboard(avd: &str) -> R<()> {
-    let dir = std::env::var_os("ANDROID_AVD_HOME").map(PathBuf::from).unwrap_or_else(|| home().join(".android/avd"));
-    let path = dir.join(format!("{avd}.avd/config.ini"));
+    let path = avd_dir().join(format!("{avd}.avd/config.ini"));
     let Ok(config) = std::fs::read_to_string(&path) else { return Ok(()) };
     if let Some(new) = with_keyboard(&config) {
         std::fs::write(&path, new)?;
