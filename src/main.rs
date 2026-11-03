@@ -134,7 +134,11 @@ enum Cmd {
     /// Install the Android SDK, a system image and the herdr-default AVD.
     InstallSdk,
     /// Teach Claude Code, Codex, OpenCode and Pi to use herdr-android, in every project.
-    InstallAgents,
+    InstallAgents {
+        /// Only if herdr desktop is installed (herdr runs this at startup).
+        #[arg(long)]
+        if_desktop: bool,
+    },
     /// Remove what the plugin added outside herdr: the CLI link and the agent instructions.
     Uninstall,
     /// Symlink this binary into ~/.local/bin.
@@ -469,7 +473,10 @@ fn run(cli: Cli) -> R<()> {
             print(j, format!("marked {name:?}; use --since {name:?}"), json!({ "ok": true }));
         }
         Cmd::InstallSdk => print(j, sdk::install()?, json!({ "ok": true })),
-        Cmd::InstallAgents => print(j, agents::install()?.join("\n"), json!({ "ok": true })),
+        Cmd::InstallAgents { if_desktop } if if_desktop && !host::desktop_installed() => {
+            print(j, "herdr desktop not installed; skipping agent setup", json!({ "ok": true, "skipped": true }))
+        }
+        Cmd::InstallAgents { .. } => print(j, agents::install()?.join("\n"), json!({ "ok": true })),
         Cmd::Uninstall => print(j, uninstall()?, json!({ "ok": true })),
         Cmd::InstallCli => print(j, install_cli()?, json!({ "ok": true })),
         Cmd::AgentHelp => println!("{AGENT_HELP}"),

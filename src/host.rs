@@ -123,12 +123,17 @@ fn app_home() -> PathBuf {
         .unwrap_or_else(|| PathBuf::from(std::env::var_os("HOME").unwrap_or_default()).join(".config/herdr-app"))
 }
 
+/// herdr desktop keeps its settings here once installed, whether or not its window is open.
+pub fn desktop_installed() -> bool {
+    app_home().is_dir()
+}
+
 /// Add **Android** to herdr desktop's + menu (programs.json), if herdr desktop is installed.
 pub fn install_desktop() -> R<Option<String>> {
-    let home = app_home();
-    if !home.is_dir() {
+    if !desktop_installed() {
         return Ok(None);
     }
+    let home = app_home();
     let icon_dir = home.join("icons/herdr-android");
     std::fs::create_dir_all(&icon_dir)?;
     std::fs::write(icon_dir.join("android.svg"), ICON)?;
