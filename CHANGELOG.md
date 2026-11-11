@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/MattJColes/herdr-android-emulator/compare/v1.2.0...v1.2.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* release patch versions for dependency bumps ([f03b257](https://github.com/MattJColes/herdr-android-emulator/commit/f03b25774aa9ceb839c2ad114fe0fb9fd4e18a1c))
+* release patch versions for dependency bumps ([5e191ac](https://github.com/MattJColes/herdr-android-emulator/commit/5e191acab9fb8b304eafe383f9d1fe9fbb1972c2))
+
 ## [1.2.0](https://github.com/MattJColes/herdr-android-emulator/compare/v1.1.0...v1.2.0) (2026-11-03)
 
 
