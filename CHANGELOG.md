@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.2](https://github.com/MattJColes/herdr-android-emulator/compare/v1.2.1...v1.2.2) (2026-11-18)
+
+
+### Bug Fixes
+
+* **deps:** Bump prost ([9478285](https://github.com/MattJColes/herdr-android-emulator/commit/9478285f8d502a6d05207a367d8e513901f6b976))
+* **deps:** Bump prost from 0.14.4 to 0.14.6 in the cargo-minor-and-patch group ([958491b](https://github.com/MattJColes/herdr-android-emulator/commit/958491bd059fd7597788042268da1c98e5d3cbfa))
+* **deps:** Bump resvg from 0.49.0 to 0.50.0 ([22d7881](https://github.com/MattJColes/herdr-android-emulator/commit/22d7881fe274c4d4112880b2fc1dd811c334a6f5))
+* **deps:** Bump resvg from 0.49.0 to 0.50.0 ([241230a](https://github.com/MattJColes/herdr-android-emulator/commit/241230a2bfeed726eaf24fba6a33657f5a585db9))
+
 ## [1.2.1](https://github.com/MattJColes/herdr-android-emulator/compare/v1.2.0...v1.2.1) (2026-11-11)
 
 
