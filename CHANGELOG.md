@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.3](https://github.com/MattJColes/herdr-android-emulator/compare/v1.2.2...v1.2.3) (2026-11-27)
+
+
+### Bug Fixes
+
+* **deps:** Bump the cargo-minor-and-patch group with 2 updates ([f695631](https://github.com/MattJColes/herdr-android-emulator/commit/f6956314fa398421df6a7d3eaf59da25b5f74078))
+* **deps:** Bump the cargo-minor-and-patch group with 2 updates ([ca2948c](https://github.com/MattJColes/herdr-android-emulator/commit/ca2948cd02411eff07fec323c0c1afff3e760d0a))
+
 ## [1.2.2](https://github.com/MattJColes/herdr-android-emulator/compare/v1.2.1...v1.2.2) (2026-11-18)
 
 
